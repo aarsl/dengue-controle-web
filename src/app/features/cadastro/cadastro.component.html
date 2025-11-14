@@ -1,0 +1,238 @@
+<div id="conteudo">
+    <div class="conteudo-titulo">
+        <h1>Cadastrar Atividade</h1>
+    </div>
+
+    <div class="conteudo-corpo">
+        <form [formGroup]="formulario" (ngSubmit)="salvar()" id="form-local-vistoria">
+            <fieldset>
+                <legend>Dados do Local de Vistoria</legend>
+
+                <div class="row">
+                    <div class="col-4">
+                        <div class="fieldcontain">
+                            <label for="modulo">Módulo: <span class="required">*</span></label>
+                            <input type="text" id="modulo" formControlName="modulo"
+                                [class.campo-invalido]="isCampoInvalido('modulo')">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fieldcontain">
+                            <label for="quadra">Quadra: <span class="required">*</span></label>
+                            <input type="text" id="quadra" formControlName="quadra"
+                                [class.campo-invalido]="isCampoInvalido('quadra')">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fieldcontain">
+                            <label for="lote">Lote: <span class="required">*</span></label>
+                            <input type="text" id="lote" formControlName="lote"
+                                [class.campo-invalido]="isCampoInvalido('lote')">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-8">
+                        <div class="fieldcontain">
+                            <label for="logradouro">Logradouro: <span class="required">*</span></label>
+                            <input type="text" id="logradouro" formControlName="logradouro"
+                                [class.campo-invalido]="isCampoInvalido('logradouro')">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fieldcontain">
+                            <label for="numero">Número: <span class="required">*</span></label>
+                            <input type="text" id="numero" formControlName="numero"
+                                [class.campo-invalido]="isCampoInvalido('numero')">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="condominio">Nome do Condomínio:</label>
+                            <input type="text" id="condominio" formControlName="condominio">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="edificacao">Edificação: <span class="required">*</span></label>
+                            <select id="edificacao" formControlName="edificacao"
+                                [class.campo-invalido]="isCampoInvalido('edificacao')">
+                                <option value="">Selecione</option>
+                                <option value="RESIDENCIA">Residência</option>
+                                <option value="EDIFICIO">Edifício</option>
+                                <option value="VILLAGE">Village</option>
+                                <option value="COMERCIO">Comércio</option>
+                                <option value="LOTE_VAZIO">Lote vazio</option>
+                                <option value="OBRA">Obra</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <legend>Localização GPS</legend>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="latitude">Latitude: <span class="required">*</span></label>
+                            <input id="latitude" type="text" formControlName="latitude" placeholder="Ex: -23.550520"
+                                [class.campo-invalido]="isCampoInvalido('latitude')">
+                            <div class="coord-helper">
+                                <button type="button" class="btn-map" (click)="obterLocalizacao()"
+                                    [disabled]="loadingCoordenadas">
+                                    <i class="fas fa-location-arrow"></i> Obter Localização
+                                </button>
+                                <div class="loading" *ngIf="loadingCoordenadas"></div>
+                            </div>
+                            <div class="error-msg" *ngIf="erroCoordenadas">
+                                {{ erroCoordenadas }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="longitude">Longitude: <span class="required">*</span></label>
+                            <input id="longitude" type="text" formControlName="longitude" placeholder="Ex: -46.633308"
+                                [class.campo-invalido]="isCampoInvalido('longitude')">
+                        </div>
+                    </div>
+                </div>
+
+                <legend>Dados da Atividade</legend>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="dataAtividade">Data da Atividade: <span class="required">*</span></label>
+                            <input type="date" id="dataAtividade" formControlName="dataAtividade"
+                                   [max]="dataAtual" 
+                                   [class.campo-invalido]="isCampoInvalido('dataAtividade')">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="atividade">Tipo da Atividade: <span class="required">*</span></label>
+                            <select id="atividade" formControlName="tipoAtividade"
+                                [class.campo-invalido]="isCampoInvalido('tipoAtividade')">
+                                <option value="">Selecione</option>
+                                <option value="Vistoria">Vistoria</option>
+                                <option value="Ausente">Ausente</option>
+                                <option value="Recusa">Recusa</option>
+                                <option value="Lote vazio">Lote vazio</option>
+                                <option value="Retorno">Retorno</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <div class="fieldcontain">
+                            <label for="agente">Agente: <span class="required">*</span></label>
+                            <input type="text" id="agente" formControlName="agente"
+                                [class.campo-invalido]="isCampoInvalido('agente')">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fieldcontain">
+                            <label for="agenteAcomp1">Agente Acompanhante 1:</label>
+                            <input type="text" id="agenteAcomp1" formControlName="agenteAcomp1">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fieldcontain">
+                            <label for="agenteAcomp2">Agente Acompanhante 2:</label>
+                            <input type="text" id="agenteAcomp2" formControlName="agenteAcomp2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="exibirCamposResponsavel()">
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="responsavel">Responsável: <span class="required">*</span></label>
+                            <input type="text" id="responsavel" formControlName="responsavel"
+                                [class.campo-invalido]="isCampoInvalido('responsavel')">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="funcao">Função: <span class="required">*</span></label>
+                            <select id="funcao" formControlName="funcao"
+                                [class.campo-invalido]="isCampoInvalido('funcao')">
+                                <option value="">Selecione</option>
+                                <option value="ZELADOR">Zelador</option>
+                                <option value="CASEIRO">Caseiro</option>
+                                <option value="ASSOCIADO">Associado</option>
+                                <option value="FUNCIONARIO">Funcionário</option>
+                                <option value="LOCATARIO">Locatário</option>
+                                <option value="TERCEIRIZADO">Terceirizado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <legend>Identificação de Criadouros</legend>
+
+                <app-form-criadouros formControlName="criadourosData">
+                </app-form-criadouros>
+
+                <legend>Ações Realizadas</legend>
+
+                <div class="fieldcontain checkbox-list">
+                    <div class="checkbox-item" *ngFor="let acao of tiposAcoes">
+                        <input type="checkbox" 
+                            [id]="'acao_' + acao" 
+                            [value]="acao"
+                            (change)="onSelectAcao(acao, $event)"
+                            [checked]="(formulario.get('acoesRealizadas')?.value || []).includes(acao)">
+                        <label [for]="'acao_' + acao">{{ acao }}</label>
+                    </div>
+                </div>
+
+                <div class="fieldcontain">
+                    <label for="observacao">Observações:</label>
+                    <textarea id="observacao" formControlName="observacao" placeholder="Descreva detalhes adicionais da vistoria..."></textarea>
+                </div>
+
+                <legend>Agendamento de Retorno</legend>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="dataRetorno">Data de Retorno:</label>
+                            <input type="date" id="dataRetorno" formControlName="dataRetorno" [min]="dataAtual" >
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="fieldcontain">
+                            <label for="motivoRetorno">Motivo do Retorno:</label>
+                            <select id="motivoRetorno" formControlName="motivoRetorno">
+                                <option value="">Selecione</option>
+                                <option value="Ausente">Morador ausente</option>
+                                <option value="Recusa">Recusa de vistoria</option>
+                                <option value="Larvas">Larvas identificadas</option>
+                                <option value="Aedes">Aedes aegypti</option>
+                                <option value="Acompanhamento">Acompanhamento</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </fieldset>
+
+            <div class="buttons">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="limpar()">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

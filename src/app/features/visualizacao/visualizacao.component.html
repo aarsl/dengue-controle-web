@@ -1,0 +1,442 @@
+<div id="conteudo">
+	<div class="conteudo-titulo">
+		<h1>Local de Vistoria</h1>
+	</div>
+
+	<div class="conteudo-corpo">
+		<div *ngIf="carregando()" class="no-data">
+			<i class="fas fa-spinner fa-spin" style="font-size: 3em; color: #ccc; margin-bottom: 0.5em;"></i>
+			<p>Carregando...</p>
+		</div>
+
+		<div *ngIf="erro && !carregando()" class="no-data">
+			<i class="fas fa-exclamation-triangle" style="font-size: 3em; color: #ff9800; margin-bottom: 0.5em;"></i>
+			<p>Local de Vistoria não encontrado.</p>
+			<button class="btn btn-primary" (click)="voltar()">
+				<i class="fas fa-arrow-left"></i> Voltar
+			</button>
+		</div>
+
+		<div *ngIf="!carregando() && !erro && localVistoriaAtual" id="form-local-vistoria">
+			<fieldset>
+				<div id="imovel" [class.section-editing]="isSecaoEditando('imovel')"
+					[class.section]="!isSecaoEditando('imovel')">
+					<div class="section-header">
+						<legend>Dados do Local de Vistoria</legend>
+						<div class="btn-group">
+							<button type="button" class="btn btn-cancel" 
+								*ngIf="isSecaoEditando('imovel')"
+								(click)="cancelarEdicaoLocal('imovel')">
+								<i class="fas fa-times"></i>
+								<span>Cancelar</span>
+							</button>
+							<button type="button" class="btn btn-secondary btn-edit"
+								[class.editing]="isSecaoEditando('imovel')" (click)="toggleEditSection('imovel')">
+								<i class="fas" [ngClass]="isSecaoEditando('imovel') ? 'fa-save' : 'fa-pen'"></i>
+								<span>{{ isSecaoEditando('imovel') ? 'Salvar' : 'Editar' }}</span>
+							</button>
+						</div>
+					</div>
+					<div class="section-divider"></div>
+
+					<div class="row">
+						<div class="col-4">
+							<div class="fieldcontain">
+								<label for="modulo">Módulo: <span class="required">*</span></label>
+								<input type="text" id="modulo" [(ngModel)]="localVistoriaAtual.modulo"
+									[disabled]="!isSecaoEditando('imovel')"
+									[class.campo-invalido]="isCampoInvalidoImovel('modulo')">
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="fieldcontain">
+								<label for="quadra">Quadra: <span class="required">*</span></label>
+								<input type="text" id="quadra" [(ngModel)]="localVistoriaAtual.quadra"
+									[disabled]="!isSecaoEditando('imovel')"
+									[class.campo-invalido]="isCampoInvalidoImovel('quadra')">
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="fieldcontain">
+								<label for="lote">Lote: <span class="required">*</span></label>
+								<input type="text" id="lote" [(ngModel)]="localVistoriaAtual.lote"
+									[disabled]="!isSecaoEditando('imovel')"
+									[class.campo-invalido]="isCampoInvalidoImovel('lote')">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-8">
+							<div class="fieldcontain">
+								<label for="logradouro">Logradouro: <span class="required">*</span></label>
+								<input type="text" id="logradouro" [(ngModel)]="localVistoriaAtual.logradouro"
+									[disabled]="!isSecaoEditando('imovel')"
+									[class.campo-invalido]="isCampoInvalidoImovel('logradouro')">
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="fieldcontain">
+								<label for="numero">Número: <span class="required">*</span></label>
+								<input type="text" id="numero" [(ngModel)]="localVistoriaAtual.numero"
+									[disabled]="!isSecaoEditando('imovel')"
+									[class.campo-invalido]="isCampoInvalidoImovel('numero')">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="fieldcontain">
+								<label for="condominio">Nome do Condomínio:</label>
+								<input type="text" id="condominio" [(ngModel)]="localVistoriaAtual.condominio"
+									[disabled]="!isSecaoEditando('imovel')">
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="fieldcontain">
+								<label for="edificacao">Edificação: <span class="required">*</span></label>
+								<select id="edificacao" [(ngModel)]="localVistoriaAtual.edificacao"
+									[disabled]="!isSecaoEditando('imovel')"
+									[class.campo-invalido]="isCampoInvalidoImovel('edificacao')">
+									<option value="">Selecione</option>
+									<option value="RESIDENCIA">Residência</option>
+									<option value="EDIFICIO">Edifício</option>
+									<option value="VILLAGE">Village</option>
+									<option value="COMERCIO">Comércio</option>
+									<option value="LOTE_VAZIO">Lote vazio</option>
+									<option value="OBRA">Obra</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Localização GPS -->
+				<div id="localizacao" [class.section-editing]="isSecaoEditando('localizacao')"
+					[class.section]="!isSecaoEditando('localizacao')" style="margin-top: 2em;">
+					<div class="section-header">
+						<legend>Localização GPS</legend>
+						<div class="btn-group">
+							<button type="button" class="btn btn-cancel"
+								*ngIf="isSecaoEditando('localizacao')"
+								(click)="cancelarEdicaoLocal('localizacao')">
+								<i class="fas fa-times"></i>
+								<span>Cancelar</span>
+							</button>
+							<button type="button" class="btn btn-secondary btn-edit"
+								[class.editing]="isSecaoEditando('localizacao')" (click)="toggleEditSection('localizacao')">
+								<i class="fas" [ngClass]="isSecaoEditando('localizacao') ? 'fa-save' : 'fa-pen'"></i>
+								<span>{{ isSecaoEditando('localizacao') ? 'Salvar' : 'Editar' }}</span>
+							</button>
+						</div>
+					</div>
+					<div class="section-divider"></div>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="fieldcontain">
+								<label for="latitude">Latitude: <span class="required">*</span></label>
+								<input type="text" id="latitude" [(ngModel)]="localVistoriaAtual.latitude"
+									[disabled]="!isSecaoEditando('localizacao')"
+									[class.campo-invalido]="isCampoInvalidoImovel('latitude')">
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="fieldcontain">
+								<label for="longitude">Longitude: <span class="required">*</span></label>
+								<input type="text" id="longitude" [(ngModel)]="localVistoriaAtual.longitude"
+									[disabled]="!isSecaoEditando('localizacao')"
+									[class.campo-invalido]="isCampoInvalidoImovel('longitude')">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Abas de Atividades -->
+				<div class="tabs-container" style="margin-top: 2em;">
+					<div class="tabs-header">
+						<div class="tabs">
+							<div *ngFor="let atividade of atividadesFiltradas; let i = index" 
+								class="tab"
+								[class.active]="getTabIndex(i) === abaAtiva" 
+								(click)="mudarAba(getTabIndex(i))">
+								<i class="fas fa-clipboard-check"></i>
+								{{ atividade.tipoAtividade }} - ID: {{atividade.id}}
+							</div>
+							<div *ngIf="atividadesDoImovel.length < 2" class="tab visibility-hidden"></div>
+						</div>
+						
+						<button type="button"
+								*ngIf="atividadesDoImovel.length > tabsVisiveis"
+								class="tab-nav-btn prev" 
+								[disabled]="!podeVoltar"
+								(click)="voltarTabs()">
+							<i class="fas fa-chevron-left"></i>
+						</button>
+						<button type="button" 
+								*ngIf="atividadesDoImovel.length > tabsVisiveis"
+								class="tab-nav-btn next" 
+								[disabled]="!podeAvancar"
+								(click)="avancarTabs()">
+							<i class="fas fa-chevron-right"></i>
+						</button>
+					</div>
+
+					<div id="tabs-content">
+						<div *ngFor="let atividade of atividadesDoImovel; let i = index" 
+							 class="tab-content"
+							 [class.active]="i === abaAtiva">
+
+							<fieldset>
+								<!-- Dados da Atividade -->
+								<div [id]="'dados-atividade-' + i"
+									[class.section-editing]="isAtividadeEditando(i, 'dados-atividade')"
+									[class.section]="!isAtividadeEditando(i, 'dados-atividade')">
+									<div class="section-header">
+										<legend>Dados da Atividade</legend>
+										<div class="btn-group">
+											<button type="button" class="btn btn-cancel"
+												*ngIf="isAtividadeEditando(i, 'dados-atividade')"
+												(click)="cancelarEdicaoAtividade(i, 'dados-atividade')">
+												<i class="fas fa-times"></i>
+												<span>Cancelar</span>
+											</button>
+											<button type="button" class="btn btn-secondary btn-edit"
+												[class.editing]="isAtividadeEditando(i, 'dados-atividade')"
+												(click)="toggleEditAtividade(i, 'dados-atividade')">
+												<i class="fas"
+													[ngClass]="isAtividadeEditando(i, 'dados-atividade') ? 'fa-save' : 'fa-pen'"></i>
+												<span>{{ isAtividadeEditando(i, 'dados-atividade') ? 'Salvar' : 'Editar'
+													}}</span>
+											</button>
+										</div>
+									</div>
+									<div class="section-divider"></div>
+
+									<div class="row">
+										<div class="col-6">
+											<div class="fieldcontain">
+												<label>Data da Atividade: <span class="required">*</span></label>
+												<input type="date" 
+												 	   [(ngModel)]="atividade.dataAtividade"
+													   [disabled]="!isAtividadeEditando(i, 'dados-atividade')"
+													   [attr.data-campo]="'dataAtividade'"
+													   [attr.data-atividade]="i"
+													   [class.campo-invalido]="isCampoInvalidoAtividade(i, 'dataAtividade')">
+											</div>
+										</div>
+										<div class="col-6">
+											<div class="fieldcontain">
+												<label>Tipo da Atividade: <span class="required">*</span></label>
+												<select [(ngModel)]="atividade.tipoAtividade"
+													[disabled]="!isAtividadeEditando(i, 'dados-atividade')"
+													[attr.data-campo]="'tipoAtividade'"
+													[attr.data-atividade]="i"
+													[class.campo-invalido]="isCampoInvalidoAtividade(i, 'tipoAtividade')">
+													<option value="">Selecione</option>
+													<option value="Vistoria">Vistoria</option>
+													<option value="Ausente">Ausente</option>
+													<option value="Recusa">Recusa</option>
+													<option value="Lote vazio">Lote vazio</option>
+													<option value="Retorno">Retorno</option>
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-4">
+											<div class="fieldcontain">
+												<label>Agente: <span class="required">*</span></label>
+												<input type="text" [(ngModel)]="atividade.agente"
+													[disabled]="!isAtividadeEditando(i, 'dados-atividade')"
+													[attr.data-campo]="'agente'"
+													[attr.data-atividade]="i"
+													[class.campo-invalido]="isCampoInvalidoAtividade(i, 'agente')">
+											</div>
+										</div>
+										<div class="col-4">
+											<div class="fieldcontain">
+												<label>Agente Acompanhante 1:</label>
+												<input type="text" [(ngModel)]="atividade.agenteAcomp1"
+													[disabled]="!isAtividadeEditando(i, 'dados-atividade')">
+											</div>
+										</div>
+										<div class="col-4">
+											<div class="fieldcontain">
+												<label>Agente Acompanhante 2:</label>
+												<input type="text" [(ngModel)]="atividade.agenteAcomp2"
+													[disabled]="!isAtividadeEditando(i, 'dados-atividade')">
+											</div>
+										</div>
+									</div>
+
+									<div class="row" *ngIf="exibirCamposResponsavel(atividade.tipoAtividade)">
+										<div class="col-6">
+											<div class="fieldcontain">
+												<label>Responsável: 
+													<span class="required" 
+														*ngIf="camposResponsavelObrigatorios(atividade.tipoAtividade)">*</span>
+												</label>
+												<input type="text" 
+													[(ngModel)]="atividade.responsavel"
+													[disabled]="!isAtividadeEditando(i, 'dados-atividade')"
+													[attr.data-campo]="'responsavel'"
+													[attr.data-atividade]="i"
+													[class.campo-invalido]="isCampoInvalidoAtividade(i, 'responsavel')">
+											</div>
+										</div>
+										<div class="col-6">
+											<div class="fieldcontain">
+												<label>Função: 
+													<span class="required" 
+														*ngIf="camposResponsavelObrigatorios(atividade.tipoAtividade)">*</span>
+												</label>
+												<select [(ngModel)]="atividade.funcao"
+													[disabled]="!isAtividadeEditando(i, 'dados-atividade')"
+													[attr.data-campo]="'funcao'"
+													[attr.data-atividade]="i"
+													[class.campo-invalido]="isCampoInvalidoAtividade(i, 'funcao')">
+													<option value="">Selecione</option>
+													<option value="ZELADOR">Zelador</option>
+													<option value="CASEIRO">Caseiro</option>
+													<option value="ASSOCIADO">Associado</option>
+													<option value="FUNCIONARIO">Funcionário</option>
+													<option value="LOCATARIO">Locatário</option>
+													<option value="TERCEIRIZADO">Terceirizado</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- Identificação de Criadouros -->
+								<div [id]="'criadouros-' + i"
+									 [class.section-editing]="isAtividadeEditando(i, 'criadouros')"
+									 [class.section]="!isAtividadeEditando(i, 'criadouros')" 
+									 style="margin-top: 2em;">
+									<div class="section-header">
+										<legend>Identificação de Criadouros</legend>
+										<div class="btn-group">
+											<button type="button" class="btn btn-cancel"
+												*ngIf="isAtividadeEditando(i, 'criadouros')"
+												(click)="cancelarEdicaoAtividade(i, 'criadouros')">
+												<i class="fas fa-times"></i>
+												<span>Cancelar</span>
+											</button>
+											<button type="button" class="btn btn-secondary btn-edit"
+													[class.editing]="isAtividadeEditando(i, 'criadouros')"
+													(click)="toggleEditAtividade(i, 'criadouros')">
+											<i class="fas"
+												[ngClass]="isAtividadeEditando(i, 'criadouros') ? 'fa-save' : 'fa-pen'"></i>
+											<span>{{ isAtividadeEditando(i, 'criadouros') ? 'Salvar' : 'Editar' }}</span>
+											</button>
+										</div>
+									</div>
+									
+									<div class="section-divider"></div>
+
+									<app-form-criadouros 
+										[(ngModel)]="atividade.criadourosData"
+										[disabled]="!isAtividadeEditando(i, 'criadouros')">
+									</app-form-criadouros>
+								</div>
+
+								<!-- Ações Realizadas -->
+								<div [id]="'acoes-' + i" [class.section-editing]="isAtividadeEditando(i, 'acoes')"
+									[class.section]="!isAtividadeEditando(i, 'acoes')" style="margin-top: 2em;">
+									<div class="section-header">
+										<legend>Ações Realizadas</legend>
+										<div class="btn-group">
+											<button type="button" class="btn btn-cancel"
+												*ngIf="isAtividadeEditando(i, 'acoes')"
+												(click)="cancelarEdicaoAtividade(i, 'acoes')">
+												<i class="fas fa-times"></i>
+												<span>Cancelar</span>
+											</button>
+											<button type="button" class="btn btn-secondary btn-edit"
+												[class.editing]="isAtividadeEditando(i, 'acoes')"
+												(click)="toggleEditAtividade(i, 'acoes')">
+												<i class="fas"
+													[ngClass]="isAtividadeEditando(i, 'acoes') ? 'fa-save' : 'fa-pen'"></i>
+												<span>{{ isAtividadeEditando(i, 'acoes') ? 'Salvar' : 'Editar' }}</span>
+											</button>
+										</div>
+									</div>
+									<div class="section-divider"></div>
+
+									<div class="fieldcontain">
+										<div class="checkbox-list">
+										<div class="checkbox-item" *ngFor="let acao of tiposAcoes">
+											<input type="checkbox" 
+												[id]="acao.id + '-' + i" 
+												[checked]="atividade.acoesRealizadas?.includes(acao.nome)"
+												(change)="toggleAcaoEdicao(i, acao.nome, $event)"
+												[disabled]="!isAtividadeEditando(i, 'acoes')">
+											<label [for]="acao.id + '-' + i">{{ acao.nome }}</label>
+										</div>
+										</div>
+									</div>
+
+									<div class="fieldcontain">
+										<label>Observações:</label>
+										<textarea [(ngModel)]="atividade.observacao"
+											[disabled]="!isAtividadeEditando(i, 'acoes')"></textarea>
+									</div>
+								</div>
+
+								<!-- Agendamento de Retorno -->
+								<div [id]="'retorno-' + i" [class.section-editing]="isAtividadeEditando(i, 'retorno')"
+									[class.section]="!isAtividadeEditando(i, 'retorno')" style="margin-top: 2em;">
+									<div class="section-header">
+										<legend>Agendamento de Retorno</legend>
+										<div class="btn-group">
+											<button type="button" class="btn btn-cancel"
+												*ngIf="isAtividadeEditando(i, 'retorno')"
+												(click)="cancelarEdicaoAtividade(i, 'retorno')">
+												<i class="fas fa-times"></i>
+												<span>Cancelar</span>
+											</button>
+											<button type="button" class="btn btn-secondary btn-edit"
+												[class.editing]="isAtividadeEditando(i, 'retorno')"
+												(click)="toggleEditAtividade(i, 'retorno')">
+												<i class="fas"
+													[ngClass]="isAtividadeEditando(i, 'retorno') ? 'fa-save' : 'fa-pen'"></i>
+												<span>{{ isAtividadeEditando(i, 'retorno') ? 'Salvar' : 'Editar' }}</span>
+											</button>
+										</div>
+									</div>
+									<div class="section-divider"></div>
+
+									<div class="row">
+										<div class="col-6">
+											<div class="fieldcontain">
+												<label>Data de Retorno:</label>
+												<input type="date" [(ngModel)]="atividade.dataRetorno"
+													[disabled]="!isAtividadeEditando(i, 'retorno')">
+											</div>
+										</div>
+										<div class="col-6">
+											<div class="fieldcontain">
+												<label>Motivo do Retorno:</label>
+												<select [(ngModel)]="atividade.motivoRetorno"
+													[disabled]="!isAtividadeEditando(i, 'retorno')">
+													<option value="">Selecione</option>
+													<option value="Ausente">Morador ausente</option>
+													<option value="Recusa">Recusa de vistoria</option>
+													<option value="Larvas">Larvas identificadas</option>
+													<option value="Acompanhamento">Acompanhamento</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+</div>
