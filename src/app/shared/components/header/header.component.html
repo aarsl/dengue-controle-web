@@ -1,0 +1,27 @@
+<div id="header">
+  <a [routerLink]="['/']">
+    <div id="banner">
+      <img src="assets/images/dengue-logo.png" 
+           id="dengue-logo" 
+           alt="Dengue Controle Logo">
+      <h1>Dengue Controle</h1>
+    </div>
+  </a>
+  
+  <div class="menu-toggle" (click)="toggleMenu()">
+    <i class="fas fa-bars"></i>
+  </div>
+  
+  <nav id="menu-horizontal" [class.active]="menuAberto">
+    <ul>
+      <li *ngFor="let item of menuItems">
+        <a [id]="item.id"
+           [class.active]="isRotaAtiva(item.rota)"
+           (click)="navegarPara(item)">
+          <i class="fas" [ngClass]="item.icone"></i> 
+          {{ item.texto }}
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

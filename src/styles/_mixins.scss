@@ -1,0 +1,32 @@
+@use 'variables' as *;
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == mobile {
+    @media (max-width: $breakpoint-mobile) { @content; }
+  }
+  @else if $breakpoint == tablet {
+    @media (max-width: $breakpoint-tablet) { @content; }
+  }
+  @else if $breakpoint == desktop {
+    @media (min-width: $breakpoint-desktop) { @content; }
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin transition($property: all, $duration: 0.3s) {
+  transition: $property $duration ease;
+}
+
+@mixin button-style($bg-color, $hover-color) {
+  background-color: $bg-color;
+  @include transition(background-color);
+  
+  &:hover {
+    background-color: $hover-color;
+  }
+}

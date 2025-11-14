@@ -1,0 +1,113 @@
+<div [formGroup]="formulario">
+
+    <div class="fieldcontain">
+        <label>Criadouro Encontrado:</label>
+
+        <div class="checkbox-list">
+            <div class="checkbox-item">
+                <input type="radio" id="criadouroNao" formControlName="criadouro" value="Não"
+                    (change)="toggleCriadouros()">
+                <label for="criadouroNao">Não</label>
+            </div>
+
+            <div class="checkbox-item">
+                <input type="radio" id="criadouroSim" formControlName="criadouro" value="Sim"
+                    (change)="toggleCriadouros()">
+                <label for="criadouroSim">Sim</label>
+            </div>
+        </div>
+    </div>
+
+    <div id="criadourosDetalhes" class="slide-content" [class.show]="mostrarCriadouros()">
+
+        <div class="fieldcontain">
+            <label>Tipos de Criadouros:</label>
+
+            <div class="checkbox-list col-2">
+                <div class="checkbox-item" *ngFor="let tipo of tiposCriadouros">
+                    <input type="checkbox" [id]="'tipo_' + tipo.toLowerCase()" [value]="tipo"
+                        [attr.disabled]="formulario.disabled ? true : null" (change)="onSelectCriadouro(tipo, $event)"
+                        [checked]="(formulario.get('tiposCriadouros')?.value || []).includes(tipo)">
+                    <label [for]="'tipo_' + tipo.toLowerCase()">
+                        {{ tipo }}
+                    </label>
+                </div>                
+            </div>
+        </div>
+
+        <div id="outrosCriadouros" formArrayName="outrosCriadouros" style="margin-top: 1em;">
+
+            <div [id]="'outro-criadouro-' + (i + 1)" 
+                 *ngFor="let item of outrosCriadouros.controls; let i = index"
+                 class="fieldcontain" 
+                 style="margin-bottom: 0.8em;">
+
+                <label [for]="'outroCriadouro' + (i + 1)">
+                    Outro Criadouro {{ i + 1 }}:
+                </label>
+
+                <div style="display: flex; gap: 0.5em; padding-left: .15em;">
+                    <input [id]="'outroCriadouro' + (i + 1)"
+                           type="text"
+                           [formControlName]="i"
+                           placeholder="Descreva o criadouro">
+                    <button *ngIf="!item.disabled && podeEditar"
+                            type="button"
+                            class="btn btn-primary"
+                            (click)="confirmarOutroCriadouro(i)" 
+                            style="padding: 0.5em 1em;">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button *ngIf="podeEditar" type="button" class="btn btn-secondary" (click)="removerOutroCriadouro(i)"
+                        style="padding: 0.5em 1em;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div>
+            <button type="button"
+                    *ngIf="podeEditar"
+                    class="btn btn-secondary mb-1"
+                    (click)="adicionarOutroCriadouro()">
+                <i class="fas fa-plus"></i> Outro
+            </button>
+        </div>
+
+        <div class="fieldcontain">
+            <label>Larvas Encontradas:</label>
+            <div class="checkbox-list">
+                <div class="checkbox-item">
+                    <input id="larvasNao" type="radio" value="Não" formControlName="larvas" (change)="toggleLarvas()">
+                    <label for="larvasNao">Não</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="larvasSim" type="radio" value="Sim" formControlName="larvas" (change)="toggleLarvas()">
+                    <label for="larvasSim">Sim</label>
+                </div>
+            </div>
+        </div>
+
+        <div id="localLarvasDiv" class="slide-content" [class.show]="mostrarLocaisLarvas()">
+            <div class="fieldcontain">
+                <label>Selecione os locais onde as larvas foram encontradas:</label>
+                <div id="localLarvasCheckboxes" class="checkbox-list">
+                    <div class="larva-checkbox-item checkbox-item"
+                        *ngFor="let local of locaisLarvasDisponiveis(); let i = index">
+                        <input [id]="'local_larva_' + i" type="checkbox" [value]="local"
+                            [attr.disabled]="formulario.disabled ? true : null"
+                            (change)="onChangeLocalLarva(local, $event)"
+                            [checked]="(formulario.get('locaisLarvas')?.value || []).includes(local)">
+                        <label [for]="'local_larva_' + i">
+                            {{ local }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

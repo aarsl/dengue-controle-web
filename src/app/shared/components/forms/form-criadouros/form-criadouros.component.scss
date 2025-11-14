@@ -1,0 +1,12 @@
+.slide-content {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out;
+
+  &.show {
+    max-height: 1500px;
+    opacity: 1;
+    margin-top: 1em;
+  }
+}
