@@ -1,0 +1,191 @@
+<div *ngIf="visivel" class="modal-backdrop show" (click)="fecharSeClickForaModal($event)">
+	<div class="modal" [style.display]="visivel ? 'block' : 'none'">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<h2 class="modal-title">Filtros</h2>
+					<button type="button" class="close" (click)="fechar()">
+						<i class="fa fa-times"></i>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<form>
+						<div class="row">
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-id">ID da Atividade:</label>
+									<input type="number" id="filtro-id" [(ngModel)]="filtros.atividadeId"
+										   name="atividadeId" placeholder="Digite o ID">
+								</div>
+							</div>
+
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-tipo">Tipo da Atividade:</label>
+									<select id="filtro-tipo" [(ngModel)]="filtros.tipoAtividade" name="tipoAtividade">
+										<option value="">Todos</option>
+										<option *ngFor="let tipo of tiposAtividade" [value]="tipo">{{ tipo }}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-4">
+								<div class="fieldcontain">
+									<label for="filtro-modulo">Módulo:</label>
+									<input type="text" id="filtro-modulo" [(ngModel)]="filtros.modulo" name="modulo"
+										   placeholder="Ex: M01">
+								</div>
+							</div>
+
+							<div class="col-4">
+								<div class="fieldcontain">
+									<label for="filtro-quadra">Quadra:</label>
+									<input type="text" id="filtro-quadra" [(ngModel)]="filtros.quadra" name="quadra"
+										   placeholder="Ex: Q01">
+								</div>
+							</div>
+
+							<div class="col-4">
+								<div class="fieldcontain">
+									<label for="filtro-lote">Lote:</label>
+									<input type="text" id="filtro-lote" [(ngModel)]="filtros.lote" name="lote"
+										   placeholder="Ex: L01">
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-12">
+								<div class="fieldcontain">
+									<label for="filtro-logradouro">Logradouro:</label>
+									<input type="text" id="filtro-logradouro" [(ngModel)]="filtros.logradouro"
+										   name="logradouro" placeholder="Ex: Rua das Flores">
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-condominio">Nome do Condomínio:</label>
+									<input type="text" id="filtro-condominio" [(ngModel)]="filtros.condominio"
+										   name="condominio" placeholder="Digite o condomínio">
+								</div>
+							</div>
+
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-edificacao">Edificação:</label>
+									<select id="filtro-edificacao" [(ngModel)]="filtros.edificacao" name="edificacao">
+										<option value="">Todas</option>
+										<option *ngFor="let tipo of tiposEdificacao" [value]="tipo.valor">
+											{{ tipo.label }}
+										</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-criadouro">Possui Criadouro:</label>
+									<select id="filtro-criadouro" [(ngModel)]="filtros.criadouro" name="criadouro">
+										<option value="">Selecione</option>
+										<option *ngFor="let opcao of opcoesSimNao" [value]="opcao.valor">
+											{{ opcao.label }}
+										</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-larvas">Possui Larvas:</label>
+									<select id="filtro-larvas" [(ngModel)]="filtros.larvas" name="larvas">
+										<option value="">Selecione</option>
+										<option *ngFor="let opcao of opcoesSimNao" [value]="opcao.valor">
+											{{ opcao.label }}
+										</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-criadouro">Tipo de Criadouro:</label>
+									<select id="filtro-tipo-criadouro" [(ngModel)]="filtros.tipoCriadouro" name="tipoCriadouro">
+										<option value="">Selecione</option>
+										<option *ngFor="let tipo of tiposCriadouros" [value]="tipo">
+											{{ tipo }}
+										</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-agente">Nome Agente:</label>
+									<input type="text" id="filtro-agente" [(ngModel)]="filtros.agente"
+										   name="agente" placeholder="Digite o nome do Agente">
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-data-inicio">Data Atividade - Início:</label>
+									<input type="date" id="filtro-data-inicio" [(ngModel)]="filtros.dataAtividadeInicio"
+										   name="dataAtividadeInicio">
+								</div>
+							</div>
+
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-data-fim">Data Atividade - Fim:</label>
+									<input type="date" id="filtro-data-fim" [(ngModel)]="filtros.dataAtividadeFim"
+										   name="dataAtividadeFim">
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-agend-inicio">Data Agendamento - Início:</label>
+									<input type="date" id="filtro-agend-inicio"
+										   [(ngModel)]="filtros.dataAgendamentoInicio" name="dataAgendamentoInicio">
+								</div>
+							</div>
+
+							<div class="col-6">
+								<div class="fieldcontain">
+									<label for="filtro-agend-fim">Data Agendamento - Fim:</label>
+									<input type="date" id="filtro-agend-fim" [(ngModel)]="filtros.dataAgendamentoFim"
+										   name="dataAgendamentoFim">
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" (click)="limpar()">
+						<i class="fas fa-eraser"></i> Limpar
+					</button>
+					<button type="button" class="btn btn-primary" (click)="aplicar()">
+						<i class="fas fa-filter"></i> Filtrar
+					</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

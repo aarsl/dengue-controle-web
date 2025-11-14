@@ -1,0 +1,145 @@
+<div id="conteudo">
+	<div class="conteudo-titulo">
+		<h1>Lista de Atividades</h1>
+	</div>
+
+	<div id="list-vistorias" class="conteudo-corpo">
+		<button type="button" class="button-action button-light mbl" style="margin: .8em;" (click)="filtrar()">
+			<i class="fa fa-filter"></i> Filtros
+			<span class="badge-filtros" *ngIf="quantidadeFiltrosAtivos > 0">
+				({{ quantidadeFiltrosAtivos }})
+			</span>
+		</button>
+
+		<div class="container-fluid">
+
+			<table class="table table-responsive">
+				<thead>
+					<tr>
+						<th class="col-id" (click)="ordenarPor('id')">
+							<div class="sortable" [ngClass]="classeOrdenacao('id')">
+								ID
+							</div>
+						</th>
+						<th class="col-endereco">
+							<div>
+								Endereço
+							</div>
+						</th>
+						<th class="col-modulo">
+							<div>
+								<span class="texto-completo">Módulo/Quadra/Lote</span>
+								<span class="texto-mobile">M/Q/L</span>
+							</div>
+						</th>
+						<th class="col-data" (click)="ordenarPor('dataAtividade')">
+							<div class="sortable" [ngClass]="classeOrdenacao('dataAtividade')">
+								Data Atividade
+							</div>
+						</th>
+						<th class="col-agente" (click)="ordenarPor('agente')">
+							<div class="sortable" [ngClass]="classeOrdenacao('agente')">
+								Agente
+							</div>
+						</th>
+						<th class="col-atividade" (click)="ordenarPor('tipoAtividade')">
+							<div class="sortable" [ngClass]="classeOrdenacao('tipoAtividade')">
+								Atividade
+							</div>
+						</th>
+						<th class="col-larvas" (click)="ordenarPor('larvas')">
+							<div class="sortable" [ngClass]="classeOrdenacao('larvas')">
+								Larvas
+							</div>
+						</th>
+						<th class="col-acao"></th>
+					</tr>
+				</thead>
+				<tbody>
+				<tr *ngFor="let item of atividadesFiltradas(); let i = index" 
+					[class.even]="i % 2 === 0"
+						[class.odd]="i % 2 !== 0">
+						<td class="col-id">{{ item.atividadeId }}</td>
+						<td class="col-endereco">{{ item.endereco }}</td>
+						<td class="col-modulo">{{ item.modulo }}/{{ item.quadra }}/{{ item.lote }}</td>
+						<td class="col-data">{{ item.dataAtividade | date: 'dd/MM/yyyy' }}</td>
+						<td class="col-agente">{{ item.agente }}</td>
+						<td class="col-atividade">{{ item.tipoAtividade }}</td>
+						<td class="col-larvas">{{ item.possuiLarvas || '-' }}</td>
+						<td class="col-acao text-center">
+							<a (click)="visualizar(item.localVistoriaId)" style="cursor: pointer;">
+								<i class="fa fa-lg fa-search-plus" title="Visualizar"></i>
+							</a>
+						</td>
+					</tr>
+					<tr *ngIf="atividadesFiltradas().length === 0">
+						<td colspan="8" class="text-center">Nenhuma atividade encontrada</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="row pagination-container">
+
+				<div class="col-md-4 pagination-info">
+					<span>
+						Exibindo {{ (paginaAtual() * tamanhoPagina()) + 1 }}
+						a {{ Math.min((paginaAtual() + 1) * tamanhoPagina(), totalElementos()) }}
+						de {{ totalElementos() }} registros
+					</span>
+				</div>
+
+				<div class="col-md-4 text-center pagination-center">
+					<nav>
+						<ul class="pagination justify-content-center mb-0">
+
+							<li class="page-item" [class.disabled]="primeiraPagina()">
+								<a class="page-link" (click)="primeiraPag()"><i class="fa fa-angle-double-left"></i></a>
+							</li>
+
+							<li class="page-item" [class.disabled]="primeiraPagina()">
+								<a class="page-link" (click)="paginaAnterior()"><i class="fa fa-angle-left"></i></a>
+							</li>
+
+							<li class="page-item" *ngFor="let pagina of gerarPaginasVisiveis()"
+								[class.active]="pagina === paginaAtual()">
+								<a class="page-link" (click)="irParaPagina(pagina)">
+									{{ pagina + 1 }}
+								</a>
+							</li>
+
+							<li class="page-item" [class.disabled]="ultimaPagina()">
+								<a class="page-link" (click)="proximaPagina()"><i class="fa fa-angle-right"></i></a>
+							</li>
+
+							<li class="page-item" [class.disabled]="ultimaPagina()">
+								<a class="page-link" (click)="ultimaPag()"><i class="fa fa-angle-double-right"></i></a>
+							</li>
+
+						</ul>
+					</nav>
+				</div>
+
+				<div class="col-md-4 text-md-right text-center itens-por-pagina">
+					<div class="form-inline justify-content-end">
+						<label class="mr-2">Itens por página:</label>
+						<select class="form-control form-control-sm"
+								#selectTamanho
+								(change)="alterarTamanhoPagina(+selectTamanho.value)">
+							<option *ngFor="let tamanho of tamanhosPagina" [value]="tamanho">
+								{{ tamanho }}
+							</option>
+						</select>
+					</div>
+				</div>
+
+			</div>
+
+
+			<button type="button" (click)="exportarExcel()" class="button-action button-light" style="margin: .8em;">
+				<i class="fa fa-file-excel"></i> Exportar Excel
+			</button>
+		</div>
+	</div>
+
+	<app-filtros-modal [(visivel)]="modalFiltrosVisivel" (aplicarFiltros)="onFiltrosAplicados($event)">
+	</app-filtros-modal>

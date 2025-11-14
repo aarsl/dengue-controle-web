@@ -1,0 +1,38 @@
+// Cores principais
+$primary-color: #dc3545;
+$primary-dark: #8b1f28;
+$secondary-color: #166;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
+$info-color: #17a2b8;
+
+// Cores de status
+$status-vistoria: #28a745;
+$status-ausente: #075cff;
+$status-recusa: #ff8c00;
+$status-vazio: #cdcdcd;
+$status-criadouro: #ffee00;
+$status-larvas: #dc3545;
+
+// Cores de fundo
+$bg-light: #F1F1F2;
+$bg-white: #FFFFFF;
+$bg-input: #fcfcfc;
+
+// Bordas
+$border-color: #c9c9c9;
+$border-light: #DFDFDF;
+$border-radius: 0.25rem;
+$border-radius-lg: 6px;
+
+// Espaçamentos
+$spacing-sm: 0.5em;
+$spacing-md: 1em;
+$spacing-lg: 1.5em;
+$spacing-xl: 2em;
+
+// Breakpoints
+$breakpoint-mobile: 768px;
+$breakpoint-tablet: 1024px;
+$breakpoint-desktop: 1200px;
