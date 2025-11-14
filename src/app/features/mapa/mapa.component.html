@@ -1,0 +1,84 @@
+<div id="filter-panel" [class.show]="painelAberto">
+	<div class="filter-header" (click)="togglePainel()">
+		<div class="filter-header-left">
+			<i class="fas fa-filter"></i>
+			<span>Filtrar Locais</span>
+		</div>
+		<button class="filter-close" (click)="togglePainel(); $event.stopPropagation()">
+			<i class="fas fa-times"></i>
+		</button>
+	</div>
+
+	<div class="filter-content">
+		<label for="filterAtividade">Tipo Atividade:</label>
+		<select id="filterAtividade" [(ngModel)]="filtroAtividade" (change)="filtrarMarcadores()">
+			<option value="">Todas</option>
+			<option value="Vistoria">Vistoria</option>
+			<option value="Ausente">Ausente</option>
+			<option value="Recusa">Recusa</option>
+			<option value="Vazio">Lote vazio</option>
+			<option value="Retorno">Retorno</option>
+		</select>
+
+		<label for="filterCriadouro">Criadouro:</label>
+		<select id="filterCriadouro" [(ngModel)]="filtroCriadouro" (change)="filtrarMarcadores()">
+			<option value="">Todos</option>
+			<option value="SEM">Sem criadouro</option>
+			<option value="COM">Com criadouro</option>
+			<option value="LARVAS">Com larvas</option>
+		</select>
+
+		<label for="filterEdificacao">Edificação:</label>
+		<select id="filterEdificacao" [(ngModel)]="filtroEdificacao" (change)="filtrarMarcadores()">
+			<option value="">Todas</option>
+			<option value="Residência">Residência</option>
+			<option value="Edifício">Edifício</option>
+			<option value="Village">Village</option>
+			<option value="Comércio">Comércio</option>
+			<option value="Lote vazio">Lote vazio</option>
+			<option value="Obra">Obra</option>
+		</select>
+	</div>
+</div>
+
+<div id="map-container">
+	<google-map *ngIf="googleMapsLoaded" 
+		[center]="center" 
+		[zoom]="zoom" 
+		[options]="options" 
+		width="100%" 
+		height="100%">
+	</google-map>
+</div>
+
+<div id="legend-button" (click)="toggleLegenda()">
+	<i class="fas fa-question-circle"></i>
+</div>
+
+<div id="legend-modal" *ngIf="legendaAberta">
+	<h4>Legenda</h4>
+	<div class="legend-item">
+		<div class="legend-icon icon-vistoria"></div>
+		<span>Sem criadouro</span>
+	</div>
+	<div class="legend-item">
+		<div class="legend-icon icon-ausente"></div>
+		<span>Morador ausente</span>
+	</div>
+	<div class="legend-item">
+		<div class="legend-icon icon-recusa"></div>
+		<span>Recusa de vistoria</span>
+	</div>
+	<div class="legend-item">
+		<div class="legend-icon icon-vazio"></div>
+		<span>Lote vazio</span>
+	</div>
+	<div class="legend-item">
+		<div class="legend-icon icon-criadouro"></div>
+		<span>Criadouro identificado</span>
+	</div>
+	<div class="legend-item">
+		<div class="legend-icon icon-larvas"></div>
+		<span>Larvas identificadas</span>
+	</div>
+</div>

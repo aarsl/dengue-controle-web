@@ -1,0 +1,7 @@
+<div id="toast-message"
+     [class.show]="exibir()"
+     [class.toast-info]="type === 'info'"
+     [class.toast-warn]="type === 'warn'"
+     [class.toast-error]="type === 'error'">
+  {{ message }}
+</div>

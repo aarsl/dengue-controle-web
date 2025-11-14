@@ -1,0 +1,428 @@
+<div id="conteudo">
+    <div class="conteudo-titulo">
+        <h1>Relatórios e Indicadores</h1>
+    </div>
+
+    <div class="conteudo-corpo">
+        <!-- Filtros de Data -->
+        <section class="secao-filtros">
+            <div class="secao-header">
+                <h2><i class="fas fa-filter"></i> Período de Análise</h2>
+                <div class="acoes-navegacao">
+                    <button class="btn btn-nav btn-prev" 
+                            (click)="retrocederAno()"
+                            [disabled]="carregando"
+                            title="Retroceder 1 ano">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-nav btn-next" 
+                            (click)="avancarAno()"
+                            [disabled]="carregando"
+                            title="Avançar 1 ano">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="filtros-container">
+                <div class="filtro-grupo">
+                    <label for="filtro-data-inicio">Data Atividade - Início:</label>
+                    <input type="date" 
+                           id="filtro-data-inicio" 
+                           [(ngModel)]="dataAtividadeInicio"
+                           name="dataAtividadeInicio"
+                           class="form-control">
+                </div>
+                
+                <div class="filtro-grupo">
+                    <label for="filtro-data-fim">Data Atividade - Fim:</label>
+                    <input type="date" 
+                           id="filtro-data-fim" 
+                           [(ngModel)]="dataAtividadeFim"
+                           name="dataAtividadeFim"
+                           class="form-control">
+                </div>
+                
+                <div class="filtro-acoes">
+                    <button class="btn btn-primary" 
+                            (click)="calcularRelatorios()"
+                            [disabled]="!botaoCalcularHabilitado">
+                        <i class="fas fa-calculator"></i> Calcular
+                    </button>
+                </div>
+            </div>
+            
+            @if (mensagemErroPeriodo) {
+                <div class="alerta-periodo">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ mensagemErroPeriodo }}
+                </div>
+            }
+            
+            @if (carregandoGeral()) {
+                <div class="info-carregamento">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Atualizando relatórios...
+                </div>
+            }
+        </section>
+
+        @if (carregando) {
+            <div class="loading-container">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Carregando relatórios...</p>
+            </div>
+        }
+
+        @if (erro && !carregando) {
+            <div class="error-container">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Erro ao carregar relatórios</p>
+                <button class="btn btn-primary" (click)="carregarIndicadores()">
+                    <i class="fas fa-sync-alt"></i> Tentar novamente
+                </button>
+            </div>
+        }
+
+        @if (relatorio && relatorio.indicadores && !carregando) {
+            <div class="relatorios-container">
+            
+                <!-- Indicadores Principais -->
+                <section class="secao-indicadores">
+                    <h2><i class="fas fa-tachometer-alt"></i> Indicadores Principais</h2>
+                    
+                    <div class="cards-grid">
+                        
+                        <div class="card-indicador card-primary">
+                            <div class="card-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value">{{ relatorio.indicadores.percentualVistoriados }}%</div>
+                                <div class="card-label">Imóveis Visitados</div>
+                                <div class="card-detail">
+                                    {{ relatorio.indicadores.locaisVisitados }} de {{ relatorio.indicadores.totalLocais }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-indicador card-ok">
+                            <div class="card-icon">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value">{{ relatorio.indicadores.totalAtividades }}</div>
+                                <div class="card-label">Total de Atividades</div>
+                                <div class="card-detail">Registradas</div>
+                            </div>
+                        </div>
+
+                        <div class="card-indicador card-info">
+                            <div class="card-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value">{{ relatorio.indicadores.tempoMedioRetorno | number:'1.0-1' }}</div>
+                                <div class="card-label">Dias p/ Retorno</div>
+                                <div class="card-detail">Tempo médio</div>
+                            </div>
+                        </div>
+
+                        <div class="card-indicador card-success">
+                            <div class="card-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value">{{ relatorio.indicadores.percentualSemCriadouros }}%</div>
+                                <div class="card-label">Sem Criadouros</div>
+                                <div class="card-detail">
+                                    {{ relatorio.indicadores.vistoriasSemCriadouros }} vistorias
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-indicador card-warning">
+                            <div class="card-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value">{{ relatorio.indicadores.percentualComCriadouros }}%</div>
+                                <div class="card-label">Com Criadouros</div>
+                                <div class="card-detail">
+                                    {{ relatorio.indicadores.totalCriadouros }} identificados
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-indicador card-danger">
+                            <div class="card-icon">
+                                <i class="fas fa-bug"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value">{{ relatorio.indicadores.percentualComLarvas }}%</div>
+                                <div class="card-label">Com Larvas</div>
+                                <div class="card-detail">
+                                    {{ relatorio.indicadores.atividadesComLarvas }} ocorrências
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Distribuição de Atividades -->
+                <section class="secao-distribuicao">
+                    <h2><i class="fas fa-chart-pie"></i> Distribuição de Atividades</h2>
+                    @if (carregandoDistribuicao()) {
+                        <div class="section-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Carregando distribuição...</span>
+                        </div>
+                    }
+                    @if (erroDistribuicao() && !carregandoDistribuicao()) {
+                        <div class="section-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Erro ao carregar distribuição</span>
+                            <button class="btn-retry" (click)="recarregarSecao('distribuicao')">
+                                <i class="fas fa-sync-alt"></i> Tentar novamente
+                            </button>
+                        </div>
+                    }
+                    @if (!carregandoDistribuicao() && !erroDistribuicao() && relatorio.distribuicaoAtividades) {
+                        <div class="distribuicao-grid">
+                            @for (dist of relatorio.distribuicaoAtividades; track dist.tipoAtividade) {
+                                <div class="distribuicao-item"
+                                     [class.tipo-vistoria]="dist.tipoAtividade === 'VISTORIA'"
+                                     [class.tipo-ausente]="dist.tipoAtividade === 'AUSENTE'"
+                                     [class.tipo-recusa]="dist.tipoAtividade === 'RECUSA'"
+                                     [class.tipo-vazio]="dist.tipoAtividade === 'VAZIO'"
+                                     [class.tipo-retorno]="dist.tipoAtividade === 'RETORNO'">
+                                    <div class="distribuicao-icon">
+                                        <i class="fas {{ getIconeAtividade(dist.tipoAtividade) }}"></i>
+                                    </div>
+                                    <div class="distribuicao-info">
+                                        <div class="distribuicao-tipo">{{ formatarTipoAtividade(dist.tipoAtividade) }}</div>
+                                        <div class="distribuicao-quantidade">{{ dist.quantidade }} atividades</div>
+                                    </div>
+                                    <div class="distribuicao-percentual">{{ dist.percentual }}%</div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </section>
+
+                <!-- Estatísticas de Criadouros -->
+                <section class="secao-criadouros">
+                    <h2><i class="fas fa-database"></i> Estatísticas de Criadouros</h2>
+                    @if (carregandoCriadouros()) {
+                        <div class="section-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Carregando estatísticas...</span>
+                        </div>
+                    }
+                    @if (erroCriadouros() && !carregandoCriadouros()) {
+                        <div class="section-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Erro ao carregar estatísticas</span>
+                            <button class="btn-retry" (click)="recarregarSecao('criadouros')">
+                                <i class="fas fa-sync-alt"></i> Tentar novamente
+                            </button>
+                        </div>
+                    }
+                    
+                    @if (!carregandoCriadouros() && !erroCriadouros() && relatorio.estatisticasCriadouros) {
+                        <div class="criadouros-grid">
+                            <div class="criadouros-card">
+                                <h3>Criadouros</h3>
+                                <div class="tipos-list">
+                                    @for (tipo of relatorio.estatisticasCriadouros.tiposCriadouros; track tipo.tipo) {
+                                        <div class="tipo-item">
+                                            <div class="tipo-nome">{{ tipo.tipo }}</div>
+                                            <div class="tipo-bar-container">
+                                                <div class="tipo-bar" 
+                                                     [style.width.%]="getBarWidthCriadouro(tipo.quantidade)">
+                                                </div>
+                                            </div>
+                                            <div class="tipo-quantidade">{{ tipo.quantidade }}</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="criadouros-card">
+                                <h3>Criadouros com Larvas</h3>
+                                <div class="locais-list">
+                                    @for (localLarvas of relatorio.estatisticasCriadouros.locaisLarvasMaisComuns; track localLarvas.local) {
+                                        <div class="local-item">
+                                            <div class="local-nome">{{ localLarvas.local }}</div>
+                                            <div class="local-bar-container">
+                                                <div class="local-bar" 
+                                                     [style.width.%]="getBarWidthLocal(localLarvas.quantidade)">
+                                                </div>
+                                            </div>
+                                            <div class="local-quantidade">{{ localLarvas.quantidade }}</div>
+                                        </div>
+                                    }
+                                    @if (relatorio.estatisticasCriadouros.locaisLarvasMaisComuns.length === 0) {
+                                        <div class="no-data">
+                                            Nenhum dado disponível
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </section>
+
+                <!-- Rankings -->
+                <section class="secao-rankings">
+                    <h2><i class="fas fa-ranking-star"></i>Ranking Geográfico de Larvas</h2>
+                    @if (carregandoRankings()) {
+                        <div class="section-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Carregando rankings...</span>
+                        </div>
+                    }
+                    @if (erroRankings() && !carregandoRankings()) {
+                        <div class="section-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Erro ao carregar rankings</span>
+                            <button class="btn-retry" (click)="recarregarSecao('rankings')">
+                                <i class="fas fa-sync-alt"></i> Tentar novamente
+                            </button>
+                        </div>
+                    }
+                    @if (!carregandoRankings() && !erroRankings()) {
+                        <div class="rankings-grid">
+                            <!-- Primeira coluna: Posições 1-5 -->
+                            <div class="ranking-card">
+                                <div class="ranking-list">
+                                    @for (item of primeirosCincoModulos; track item.local; let i = $index) {
+                                        <div class="ranking-item"
+                                             [class.top1]="i === 0"
+                                             [class.top2]="i === 1"
+                                             [class.top3]="i === 2">
+                                            <div class="ranking-position">{{ i + 1 }}º</div>
+                                            <div class="ranking-info">
+                                                <div class="ranking-local">Módulo {{ item.local }}</div>
+                                                <div class="ranking-quantidade">{{ item.quantidade }} casos</div>
+                                            </div>
+                                            <div class="ranking-percentual">{{ item.percentual }}%</div>
+                                        </div>
+                                    }
+                                    @if (primeirosCincoModulos.length === 0) {
+                                        <div class="no-data">
+                                            Nenhum dado disponível
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            @if (ultimosCincoModulos.length > 0) {
+                                <!-- Segunda coluna: Posições 6-10 -->
+                                <div class="ranking-card">
+                                    <div class="ranking-list">
+                                        @for (item of ultimosCincoModulos; track item.local; let i = $index) {
+                                            <div class="ranking-item">
+                                                <div class="ranking-position">{{ i + 6 }}º</div>
+                                                <div class="ranking-info">
+                                                    <div class="ranking-local">Módulo {{ item.local }}</div>
+                                                    <div class="ranking-quantidade">{{ item.quantidade }} casos</div>
+                                                </div>
+                                                <div class="ranking-percentual">{{ item.percentual }}%</div>
+                                            </div>
+                                        }
+                                        @if (ultimosCincoModulos.length === 0) {
+                                            <div class="no-data">
+                                                Nenhum dado disponível
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </section>
+
+                <!-- Evolução Mensal -->
+                <section class="secao-evolucao">
+                    <h2><i class="fas fa-chart-line"></i> Evolução Mensal</h2>
+                    @if (carregandoEvolucao()) {
+                        <div class="section-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Carregando evolução...</span>
+                        </div>
+                    }
+                    @if (erroEvolucao() && !carregandoEvolucao()) {
+                        <div class="section-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Erro ao carregar evolução</span>
+                            <button class="btn-retry" (click)="recarregarSecao('evolucao')">
+                                <i class="fas fa-sync-alt"></i> Tentar novamente
+                            </button>
+                        </div>
+                    }
+                    @if (!carregandoEvolucao() && !erroEvolucao() && relatorio.evolucaoMensal) {
+                        <div class="evolucao-chart">
+                            <div class="chart-container">
+                                @for (mes of relatorio.evolucaoMensal; track mes.mes) {
+                                    <div class="chart-bar-group">
+                                        <div class="chart-bars">
+                                            <div class="chart-bar bar-total" 
+                                                 [style.height.%]="getBarHeight(mes.totalAtividades, maxAtividades)"
+                                                 title="Total: {{ mes.totalAtividades }}">
+                                                <span class="bar-value">{{ mes.totalAtividades }}</span>
+                                            </div>
+                                            <div class="chart-bar bar-larvas" 
+                                                 [style.height.%]="getBarHeight(mes.atividadesComLarvas, maxAtividades)"
+                                                 title="Com Larvas: {{ mes.atividadesComLarvas }}">
+                                                <span class="bar-value">{{ mes.atividadesComLarvas }}</span>
+                                            </div>
+                                            <div class="chart-bar bar-sem-larvas" 
+                                                 [style.height.%]="getBarHeight(mes.atividadesSemLarvas, maxAtividades)"
+                                                 title="Sem Larvas: {{ mes.atividadesSemLarvas }}">
+                                                <span class="bar-value">{{ mes.atividadesSemLarvas }}</span>
+                                            </div>
+                                            <div class="chart-bar bar-criadouros" 
+                                                 [style.height.%]="getBarHeight(mes.atividadesComCriadouros, maxAtividades)"
+                                                 title="Com Criadouros: {{ mes.atividadesComCriadouros }}">
+                                                <span class="bar-value">{{ mes.atividadesComCriadouros }}</span>
+                                            </div>
+                                            <div class="chart-bar bar-sem-criadouros" 
+                                                 [style.height.%]="getBarHeight(mes.atividadesSemCriadouros, maxAtividades)"
+                                                 title="Sem Criadouros: {{ mes.atividadesSemCriadouros }}">
+                                                <span class="bar-value">{{ mes.atividadesSemCriadouros }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="chart-label">{{ formatarMes(mes.mes) }}</div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color bar-total"></div>
+                                    <span>Total de Atividades</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color bar-larvas"></div>
+                                    <span>Com Larvas</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color bar-sem-larvas"></div>
+                                    <span>Sem Larvas</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color bar-criadouros"></div>
+                                    <span>Com Criadouros</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color bar-sem-criadouros"></div>
+                                    <span>Sem Criadouros</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </section>
+
+            </div>
+        }
+    </div>
+</div>
